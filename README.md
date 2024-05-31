@@ -10,7 +10,7 @@
 
 * python
 * pytourch
-* keras
+* MYSQL
 * AWS
 * pandas
 
