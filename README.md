@@ -13,11 +13,23 @@
 * MYSQL
 * AWS
 * pandas
+* computer vision
 
 # 4. 데이터셋 
 * 기존 faceshape 데이터를 전처리 및 데이터를 추가적으로 수집하여 턱 데이터 셋을 직접 만들었습니다.
 턱 데이터셋 : https://www.kaggle.com/datasets/idealm99/chinshape2
 얼굴 데이터셋 : https://www.kaggle.com/datasets/niten19/face-shape-dataset
+추가한 얼굴 데이터셋 : https://www.kaggle.com/datasets/idealm99/newfaceshape7
+
+opencv를 이용해서 얼굴 부분만 잘라서 저장
+
+추가된 얼굴 데이터셋에 턱에 대한 분류
+
+미디어파이프를 이용해 얼굴을 인식하고 이목구비 비율 분석
+
+8000장 정도의 사진의 표본을 통해 비율 분포를 분석
+
+
 
 
 # 5. 모델 학습 및 평가
