@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이목구비 분석 결과</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        img {
+            display: block;
+            max-width: 300px;
+            margin: 0 auto 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            font-size: 18px;
+            color: #555;
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        li i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #ff4f5a;
+        }
+        .btn-primary {
+            background-color: #ff4f5a;
+            border-color: #ff4f5a;
+            font-weight: 600;
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #ff3d4a;
+            border-color: #ff3d4a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="bi bi-person-lines-fill"></i> 이목구비 분석 결과</h2>
+
+        <!-- 사용자 얼굴 사진 표시 -->
+        <img src="/hairfit/latest_image.jpg" alt="사용자 얼굴">
+
+        <ul>
+            {% for feature in features %}
+            <li>
+                <i class="bi bi-eye-fill"></i> <!-- 아이콘은 feature에 맞게 변경 가능 -->
+                {{ feature }}: {{ descriptions.get(feature, "설명이 없습니다.") }}
+            </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('hairstyle_recommendations') }}" class="btn btn-primary">
+            <i class="bi bi-arrow-right"></i> 다음
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
