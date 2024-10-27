@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, url_for
 from pymongo import MongoClient
+import requests
 import gridfs
 from werkzeug.utils import secure_filename
 import os
@@ -29,6 +30,74 @@ fs = gridfs.GridFS(db)  # GridFS 사용해 파일 저장
 # 전역 상태 변수
 analyzing_progress = 0
 
+
+@app.route('/apply_hair_synthesis', methods=['POST'])
+def apply_hair_synthesis():
+    try:
+        image_data = request.files['image']
+        hair_style = request.form['hair_style']
+        
+        api_key = 'mEGHgLy4htBl9lUZkMcMAa5VTW4kxDuqqwzLOuoK1Ijn2rYDsA5wGxJ9eQEBpWXh'
+        url = 'https://www.ailabapi.com/api/portrait/effects/hairstyle-editor-pro'
+        headers = {'ailabapi-api-key': api_key}
+        
+        files = [('image', (secure_filename(image_data.filename), image_data, 'application/octet-stream'))]
+        data = {'hair_style': hair_style, 'color': 'brown', 'task_type': 'async'}
+
+        response = requests.post(url, headers=headers, files=files, data=data)
+        response_json = response.json()
+
+        if response.status_code == 200:
+            task_id = response_json.get('task_id')
+            image_url = get_async_result(task_id)
+
+            if image_url:
+                return render_template('next_page.html', image_url=image_url)
+            else:
+                return jsonify({'error': 'Hair synthesis result not available yet'}), 500
+        else:
+            return jsonify({'error': 'Hair synthesis failed', 'details': response_json}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
+
+    
+def get_async_result(task_id): 
+    url = "https://www.ailabapi.com/api/common/query-async-task-result"
+    headers = {
+        'ailabapi-api-key': 'mEGHgLy4htBl9lUZkMcMAa5VTW4kxDuqqwzLOuoK1Ijn2rYDsA5wGxJ9eQEBpWXh'  # API 키는 적절하게 설정해야 합니다.
+    }
+    params = {'task_id': task_id}  # task_id를 쿼리 파라미터로 전달
+
+    for attempt in range(20):
+        response = requests.get(url, headers=headers, params=params)
+        print(f"Attempt {attempt + 1}: Get async result response: {response.status_code}")
+
+        if response.status_code == 200:
+            try:
+                response_json = response.json()
+                print(f"Response JSON: {response_json}")
+
+                task_status = response_json.get('task_status')
+                if task_status == 2:
+                    return response_json.get('data', {}).get('images', [None])[0]
+                elif task_status in [0, 1]:
+                    print("Waiting for the task to complete...")
+            except ValueError:
+                print("Invalid JSON response received.")
+                return None
+        else:
+            print(f"Error retrieving async result: {response.status_code}")
+        
+        time.sleep(10)
+
+    return None
+
+
+
+
+    
 # 홈 페이지 (index.html) 서빙
 @app.route('/')
 def index():
@@ -39,6 +108,15 @@ def index():
 def camera():
     return render_template('camera.html')
 
+
+@app.route('/custom')
+def custom_hair_synthesis():
+    return render_template('custom.html')
+
+@app.route('/next_page', methods=['GET'])
+def next_page():
+    return render_template('next_page.html')
+
 from flask import send_from_directory
 
 # hairfit 폴더에서 이미지를 서빙하는 엔드포인트 추가
@@ -47,6 +125,9 @@ def serve_image(filename):
     return send_from_directory('C:/Users/USER/Desktop/hairfit', filename)
 
 
+
+
+    
 def process_image_from_db(file_id):
     """GridFS에서 이미지 가져와서 처리하는 함수"""
     try:

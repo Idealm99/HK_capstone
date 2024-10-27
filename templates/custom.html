@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>헤어스타일 선택</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f8f9fa;
+                padding: 20px;
+            }
+            h1, h2 {
+                color: #333;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
+            .hairstyle-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                justify-content: center;
+                margin-bottom: 40px;
+            }
+            .hairstyle-container label {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+                border: 2px solid transparent;
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .hairstyle-container label:hover {
+                transform: scale(1.05);
+                border-color: #007bff;
+            }
+            .hairstyle-container img {
+                width: 120px;
+                height: auto;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+            .hairstyle-container input[type="radio"] {
+                margin-top: 5px;
+            }
+            /* Button Styles */
+            .submit-btn {
+                display: block;
+                width: 200px;
+                margin: 20px auto;
+                padding: 12px 30px;
+                background-color: #28a745;
+                color: white;
+                text-align: center;
+                border-radius: 30px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .submit-btn:hover {
+                background-color: #218838;
+            }
+        </style>
+        <script>
+            function validateSelection() {
+                const selected = document.querySelector('input[name="hairstyle"]:checked');
+                if (!selected) {
+                    alert("하나의 헤어스타일을 선택해주세요.");
+                    return false;
+                }
+                // 선택된 헤어스타일을 로컬 스토리지에 저장
+                localStorage.setItem('selectedHairstyle', selected.value);
+                return true; // 폼 제출 진행
+            }
+        </script>
+    </head>
+    <body>
+<body>
+    <div class="container">
+        <h1 class="text-center">헤어스타일 선택</h1>
+
+        <h2>남성 헤어스타일</h2>
+        <div class="hairstyle-container">
+            <label>
+                <img src="{{ url_for('static', filename='man/Afro.webp') }}" alt="Afro">
+                <input type="radio" name="hairstyle" value="Afro"> Afro
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/BluntBowlCut.webp') }}" alt="Blunt Bowl Cut">
+                <input type="radio" name="hairstyle" value="BluntBowlCut"> Blunt Bowl Cut
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/BuzzCut.webp') }}" alt="Buzz Cut">
+                <input type="radio" name="hairstyle" value="BuzzCut"> Buzz Cut
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/CombOver.webp') }}" alt="Comb Over">
+                <input type="radio" name="hairstyle" value="CombOver"> Comb Over
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/CornrowBraids.webp') }}" alt="Cornrow Braids">
+                <input type="radio" name="hairstyle" value="CornrowBraids"> Cornrow Braids
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/CurlyShag.webp') }}" alt="Curly Shag">
+                <input type="radio" name="hairstyle" value="CurlyShag"> Curly Shag
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/FauxHawk.webp') }}" alt="Faux Hawk">
+                <input type="radio" name="hairstyle" value="FauxHawk"> Faux Hawk
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/HighTightFade.webp') }}" alt="High Tight Fade">
+                <input type="radio" name="hairstyle" value="HighTightFade"> High Tight Fade
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/LongHairTiedUp.webp') }}" alt="Long Hair Tied Up">
+                <input type="radio" name="hairstyle" value="LongHairTiedUp"> Long Hair Tied Up
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/LongWavyCurtainBangs.webp') }}" alt="Long Wavy Curtain Bangs">
+                <input type="radio" name="hairstyle" value="LongWavyCurtainBangs"> Long Wavy Curtain Bangs
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/LowFade.webp') }}" alt="Low Fade">
+                <input type="radio" name="hairstyle" value="LowFade"> Low Fade
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/ManBun.webp') }}" alt="Man Bun">
+                <input type="radio" name="hairstyle" value="ManBun"> Man Bun
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/MessyTousled.webp') }}" alt="Messy Tousled">
+                <input type="radio" name="hairstyle" value="MessyTousled"> Messy Tousled
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/Middle-parted.webp') }}" alt="Middle-parted">
+                <input type="radio" name="hairstyle" value="Middle-parted"> Middle-parted
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/Pompadour.webp') }}" alt="Pompadour">
+                <input type="radio" name="hairstyle" value="Pompadour"> Pompadour
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/SlickBack.webp') }}" alt="Slick Back">
+                <input type="radio" name="hairstyle" value="SlickBack"> Slick Back
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/Spiky.webp') }}" alt="Spiky">
+                <input type="radio" name="hairstyle" value="Spiky"> Spiky
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/TexturedFringe.webp') }}" alt="Textured Fringe">
+                <input type="radio" name="hairstyle" value="TexturedFringe"> Textured Fringe
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/TwoBlockHaircut.webp') }}" alt="Two Block Haircut">
+                <input type="radio" name="hairstyle" value="TwoBlockHaircut"> Two Block Haircut
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/UndercutLongHair.webp') }}" alt="Undercut Long Hair">
+                <input type="radio" name="hairstyle" value="UndercutLongHair"> Undercut Long Hair
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='man/WavyShag.webp') }}" alt="Wavy Shag">
+                <input type="radio" name="hairstyle" value="WavyShag"> Wavy Shag
+            </label>
+        </div>
+
+        <h2>여성 헤어스타일</h2>
+        <div class="hairstyle-container">
+            <label>
+                <img src="{{ url_for('static', filename='girl/BobCut.webp') }}" alt="Bob Cut">
+                <input type="radio" name="hairstyle" value="BobCut"> Bob Cut
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/bowlCut.webp') }}" alt="Bowl Cut">
+                <input type="radio" name="hairstyle" value="bowlCut"> Bowl Cut
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/BoxBraids.webp') }}" alt="Box Braids">
+                <input type="radio" name="hairstyle" value="BoxBraids"> Box Braids
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/Chignon.webp') }}" alt="Chignon">
+                <input type="radio" name="hairstyle" value="Chignon"> Chignon
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/Cornrows.webp') }}" alt="Cornrows">
+                <input type="radio" name="hairstyle" value="Cornrows"> Cornrows
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/CurlyBob.webp') }}" alt="Curly Bob">
+                <input type="radio" name="hairstyle" value="CurlyBob"> Curly Bob
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/DoubleBun.webp') }}" alt="Double Bun">
+                <input type="radio" name="hairstyle" value="DoubleBun"> Double Bun
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/Dreadlocks.webp') }}" alt="Dreadlocks">
+                <input type="radio" name="hairstyle" value="Dreadlocks"> Dreadlocks
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/FishtailBraid.webp') }}" alt="Fishtail Braid">
+                <input type="radio" name="hairstyle" value="FishtailBraid"> Fishtail Braid
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/LongCurly.webp') }}" alt="Long Curly">
+                <input type="radio" name="hairstyle" value="LongCurly"> Long Curly
+            </label>
+            <label>
+                <img src="{{ url_for('static', filename='girl/LongHimeCut.webp') }}" alt="Long Hime Cut">
+            <input type="radio" name="hairstyle" value="LongHimeCut"> Long Hime Cut
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/LongStraight.webp') }}" alt="Long Straight">
+            <input type="radio" name="hairstyle" value="LongStraight"> Long Straight
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/LongTwintails.webp') }}" alt="Long Twintails">
+            <input type="radio" name="hairstyle" value="LongTwintails"> Long Twintails
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/LongWavy.webp') }}" alt="Long Wavy">
+            <input type="radio" name="hairstyle" value="LongWavy"> Long Wavy
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/LooseCurlyAfro.webp') }}" alt="Loose Curly Afro">
+            <input type="radio" name="hairstyle" value="LooseCurlyAfro"> Loose Curly Afro
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/PixieCut.webp') }}" alt="Pixie Cut">
+            <input type="radio" name="hairstyle" value="PixieCut"> Pixie Cut
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/Ponytail.webp') }}" alt="Ponytail">
+            <input type="radio" name="hairstyle" value="Ponytail"> Ponytail
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/ShortCurlyPixie.webp') }}" alt="Short Curly Pixie">
+            <input type="radio" name="hairstyle" value="ShortCurlyPixie"> Short Curly Pixie
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/ShortNeatBob.webp') }}" alt="Short Neat Bob">
+            <input type="radio" name="hairstyle" value="ShortNeatBob"> Short Neat Bob
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/ShortTwintails.webp') }}" alt="Short Twintails">
+            <input type="radio" name="hairstyle" value="ShortTwintails"> Short Twintails
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/ShoulderLengthHair.webp') }}" alt="Shoulder Length Hair">
+            <input type="radio" name="hairstyle" value="ShoulderLengthHair"> Shoulder Length Hair
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/SidePartCombOverHairstyleWithHighFade.webp') }}" alt="Side Part Comb Over with High Fade">
+            <input type="radio" name="hairstyle" value="SidePartCombOverHairstyleWithHighFade"> Side Part Comb Over with High Fade
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/SlickedBack.webp') }}" alt="Slicked Back">
+            <input type="radio" name="hairstyle" value="SlickedBack"> Slick Back
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/Spiked.webp') }}" alt="Spiked">
+            <input type="radio" name="hairstyle" value="Spiked"> Spiked
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/StackedCurlsInShortBob.webp') }}" alt="Stacked Curls in Short Bob">
+            <input type="radio" name="hairstyle" value="StackedCurlsInShortBob"> Stacked Curls in Short Bob
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/TwinBraids.webp') }}" alt="Twin Braids">
+            <input type="radio" name="hairstyle" value="TwinBraids"> Twin Braids
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/Updo.webp') }}" alt="Updo">
+            <input type="radio" name="hairstyle" value="Updo"> Updo
+        </label>
+        <label>
+            <img src="{{ url_for('static', filename='girl/WavyFrenchBobVibesfrom1920.webp') }}" alt="Wavy French Bob Vibes from 1920">
+            <input type="radio" name="hairstyle" value="WavyFrenchBobVibesfrom1920"> Wavy French Bob from 1920
+        </label>
+    </div>
+
+       <!-- 선택 완료 버튼 -->
+    <form action="/next_page" method="GET" onsubmit="return validateSelection()">
+        <button type="submit" class="submit-btn">선택 완료</button>
+    </form>
+
+
+        
+</body>
+</html>

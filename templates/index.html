@@ -187,7 +187,8 @@
                     <div id="optionSelection" class="option-selection" style="display: none;">
                         <h2>Choose Your Service</h2>
                         <button class="btn btn-primary btn-lg option-btn" onclick="goToFaceAnalysis()">얼굴 분석을 통한 헤어 합성</button>
-                        <button class="btn btn-secondary btn-lg option-btn">개인 선택 헤어 합성</button>
+                        <button class="btn btn-secondary btn-lg option-btn" onclick="goToFaceCustom()">개인 선택 헤어 합성</button>
+
                     </div>
                 </div>
             </div>
@@ -315,6 +316,11 @@
         function goToFaceAnalysis() {
             window.location.href = '/camera';
         }
+
+        function goToFaceCustom() {
+            window.location.href = '/custom';
+        }
+        
     </script>
 </body>
 </html>
