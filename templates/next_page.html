@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>헤어스타일 합성</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .capture-message {
+            text-align: center;
+            font-size: 18px;
+            color: green;
+            margin-top: 20px;
+        }
+        .result-image {
+            display: block;
+            margin: 0 auto;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border-radius: 30px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .loading-message {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            color: blue;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>얼굴 촬영 및 헤어스타일 합성</h1>
+    <div class="video-container">
+        <video id="video" autoplay></video>
+        <canvas id="canvas"></canvas>
+    </div>
+    <p class="capture-message" id="captureMessage"></p>
+    <img id="resultImage" class="result-image" src="" alt="합성된 헤어스타일" style="display:none;">
+    <p class="loading-message" id="loadingMessage">헤어스타일 합성 중입니다. 잠시만 기다려 주세요...</p>
+
+    <button class="submit-btn" id="submitBtn" style="display:none;" onclick="submitImage()">헤어스타일 적용</button>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const canvasCtx = canvas.getContext('2d');
+    let isCentered = false;
+    let centerStartTime = 0;
+    let isCaptured = false;
+    let capturedImage;
+    
+    
+
+    function onResults(results) {
+        if (isCaptured) {
+            return;  // 캡처 완료 시 중단
+        }
+
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        canvasCtx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
+        if (results.multiFaceLandmarks) {
+            for (const landmarks of results.multiFaceLandmarks) {
+                drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, { color: '#C0C0C070', lineWidth: 1 });
+
+                const isAligned = checkFaceAlignment(landmarks);
+
+                if (isAligned) {
+                    if (!isCentered) {
+                        centerStartTime = Date.now();
+                        isCentered = true;
+                    }
+                    const elapsedTime = Date.now() - centerStartTime;
+                    if (elapsedTime < 3000) {
+                        canvasCtx.font = '24px Arial';
+                        canvasCtx.fillStyle = 'green';
+                        canvasCtx.fillText(`캡쳐까지 ${Math.ceil((3000 - elapsedTime) / 1000)}초...`, 10, 30);
+                    } else {
+                        captureImage(results.image);
+                    }
+                } else {
+                    isCentered = false;
+                    centerStartTime = 0;
+                    canvasCtx.font = '18px Arial';
+                    canvasCtx.fillStyle = 'red';
+                    canvasCtx.fillText("얼굴을 중앙에 맞춰주세요.", 10, 30);
+                }
+            }
+        }
+        canvasCtx.restore();
+    }
+
+    function checkFaceAlignment(landmarks) {
+        const faceCenter = landmarks[1];
+        const leftEye = landmarks[33];
+        const rightEye = landmarks[263];
+
+        const centerX = 0.5;
+        const tolerance = 0.05;
+
+        const isCentered = Math.abs(faceCenter.x - centerX) < tolerance;
+        const isLevelEyes = Math.abs(leftEye.y - rightEye.y) < tolerance;
+        return isCentered && isLevelEyes;
+    }
+    
+    async function submitImage() {
+        const selectedHairstyle = localStorage.getItem('selectedHairstyle');
+        if (!capturedImage || !selectedHairstyle) {
+            alert('이미지나 헤어스타일 정보가 누락되었습니다.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', capturedImage);
+        formData.append('hair_style', selectedHairstyle);
+
+        document.getElementById('loadingMessage').style.display = 'block'; // 로딩 메시지 표시
+
+        const response = await fetch('/apply_hair_synthesis', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        document.getElementById('loadingMessage').style.display = 'none'; // 로딩 메시지 숨기기
+
+        if (data.image_url) {
+            document.getElementById('resultImage').src = data.image_url;
+            document.getElementById('resultImage').style.display = 'block';
+        } else {
+            alert('헤어스타일 합성 실패: ' + data.error);
+        }
+    }
+
+    function captureImage(image) {
+        isCaptured = true;
+        let canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        canvas.toBlob(function(blob) {
+            capturedImage = blob;
+            document.getElementById('captureMessage').innerText = "캡쳐 완료!";
+            document.getElementById('submitBtn').style.display = "block";
+        }, 'image/jpeg');
+    }
+
+    const faceMesh = new FaceMesh({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+    });
+
+    faceMesh.setOptions({
+        maxNumFaces: 1,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    });
+
+    faceMesh.onResults(onResults);
+
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play();
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                detectFace();
+            };
+        } catch (error) {
+            console.error('Camera error:', error);
+        }
+    }
+
+    async function detectFace() {
+        await faceMesh.send({ image: video });
+        requestAnimationFrame(detectFace);
+    }
+
+    startCamera();
+
+    window.addEventListener('beforeunload', () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    });
+</script>
+
+
+
+
+</body>
+</html>

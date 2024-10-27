@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Fit - Camera</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        .camera-section {
+            background-color: #fff;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .camera-section h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .camera-section p {
+            font-size: 18px;
+            color: #777;
+            margin-bottom: 40px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .btn-primary {
+            background-color: #ff4f5a;
+            border-color: #ff4f5a;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #ff3d4a;
+            border-color: #ff3d4a;
+        }
+        .btn-secondary {
+            background-color: #f8f8f8;
+            border-color: #f8f8f8;
+            color: #333;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #ebebeb;
+            border-color: #ebebeb;
+        }
+        .footer {
+            background-color: #f8f8f8;
+            padding: 30px 0;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 0;
+        }
+        .progress {
+            height: 30px;
+        }
+        .progress-bar {
+            font-size: 18px;
+        }
+        #hairstyleImage {
+        max-width: 300px;
+        margin-top: 20px;
+        border-radius: 10px;
+        display: block;  /* block으로 설정 */
+        margin-left: auto;
+        margin-right: auto;
+       }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Face Fit</a>
+        </div>
+    </nav>
+
+    <section class="camera-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Webcam Face Detection</h1>
+                    <p>Use your webcam to capture your face and get personalized measurements.</p>
+                    <div class="video-container">
+                        <video id="video" autoplay></video>
+                        <canvas id="canvas"></canvas>
+                    </div>
+
+                    <!-- 분석 진행 상태 -->
+                    <div id="progressSection" style="display: none;">
+                        <h2>Analyzing Image...</h2>
+                        <div class="progress">
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- 결과 표시 -->
+                    <div id="resultSection" style="display: none;">
+                        <h2>Analysis Complete!</h2>
+                        <p id="analysisResult"></p>
+                        <!-- 추천 헤어스타일 이미지 추가 -->
+                        <img id="hairstyleImage" src="" alt="Recommended Hairstyle" style="display:none;">
+                    </div>
+
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center mt-4">
+                        <button class="btn btn-primary btn-lg px-4 gap-3" onclick="resetCapture()">
+                            <i class="bi bi-camera"></i> Measure Again
+                        </button>
+                        <button class="btn btn-primary btn-lg px-4 gap-3" onclick="analyzeImage()">
+                            <i class="bi bi-graph-up"></i> Analyze
+                        </button>
+                        <a href="index.html" class="btn btn-secondary btn-lg px-4">
+                            <i class="bi bi-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 Face Fit. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const canvasCtx = canvas.getContext('2d');
+        let stream;
+
+        let isCentered = false;
+        let centerStartTime = 0;
+        let isCaptured = false;
+
+        function onResults(results) {
+            if (isCaptured) {
+                return; // 이미 캡쳐 완료되었으면 다시 실행하지 않음
+            }
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
+            drawGuideline();
+
+            if (results.multiFaceLandmarks) {
+                for (const landmarks of results.multiFaceLandmarks) {
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_TESSELATION, { color: '#C0C0C070', lineWidth: 1 });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: '#FF3030' });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYEBROW, { color: '#FF3030' });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, { color: '#30FF30' });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYEBROW, { color: '#30FF30' });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, { color: '#E0E0E0' });
+                    drawConnectors(canvasCtx, landmarks, FACEMESH_LIPS, { color: '#E0E0E0' });
+                    
+                    const isAligned = checkFaceAlignment(landmarks);
+
+                    if (isAligned) {
+                        if (!isCentered) {
+                            centerStartTime = Date.now();
+                            isCentered = true;
+                        }
+                        const elapsedTime = Date.now() - centerStartTime;
+                        if (elapsedTime < 3000) {
+                            canvasCtx.font = '24px Arial';
+                            canvasCtx.fillStyle = 'green';
+                            canvasCtx.fillText(`Capturing in ${Math.ceil((3000 - elapsedTime) / 1000)}...`, 10, 30);
+                        } else {
+                            captureImage(results.image);
+                        }
+                    } else {
+                        isCentered = false;
+                        centerStartTime = 0;
+                        provideFeedback(landmarks);
+                    }
+                }
+            }
+            canvasCtx.restore();
+        }
+
+        function drawGuideline() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const ovalWidth = canvas.width * 0.5;
+            const ovalHeight = canvas.height * 0.7;
+
+            canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            canvasCtx.lineWidth = 2;
+            canvasCtx.beginPath();
+            canvasCtx.ellipse(centerX, centerY, ovalWidth / 2, ovalHeight / 2, 0, 0, 2 * Math.PI);
+            canvasCtx.stroke();
+        }
+
+        function checkFaceAlignment(landmarks) {
+            const faceCenter = landmarks[1];
+            const leftEye = landmarks[33];
+            const rightEye = landmarks[263];
+            const nose = landmarks[1];
+            const mouth = landmarks[0];
+
+            const centerX = 0.5;
+            const centerY = 0.5;
+            const tolerance = 0.05;
+
+            const isCentered = Math.abs(faceCenter.x - centerX) < tolerance;
+            const isLevelEyes = Math.abs(leftEye.y - rightEye.y) < tolerance;
+            const isProperSize = Math.abs(rightEye.x - leftEye.x) > 0.2 && Math.abs(rightEye.x - leftEye.x) < 0.4;
+            const isProperAngle = Math.abs(nose.z - mouth.z) < tolerance;
+
+            return isCentered && isLevelEyes && isProperSize && isProperAngle;
+        }
+
+        function provideFeedback(landmarks) {
+            const faceCenter = landmarks[1];
+            const leftEye = landmarks[33];
+            const rightEye = landmarks[263];
+
+            canvasCtx.font = '18px Arial';
+            canvasCtx.fillStyle = 'red';
+
+            if (faceCenter.x < 0.45) {
+                canvasCtx.fillText("Move right", 10, 30);
+            } else if (faceCenter.x > 0.55) {
+                canvasCtx.fillText("Move left", 10, 30);
+            }
+
+            if (faceCenter.y < 0.45) {
+                canvasCtx.fillText("Move down", 10, 60);
+            } else if (faceCenter.y > 0.55) {
+                canvasCtx.fillText("Move up", 10, 60);
+            }
+
+            if (Math.abs(leftEye.y - rightEye.y) > 0.05) {
+                canvasCtx.fillText("Tilt your head to level your eyes", 10, 90);
+            }
+
+            if (Math.abs(rightEye.x - leftEye.x) <= 0.2) {
+                canvasCtx.fillText("Move closer", 10, 120);
+            } else if (Math.abs(rightEye.x - leftEye.x) >= 0.4) {
+                canvasCtx.fillText("Move farther", 10, 120);
+            }
+
+            if (Math.abs(landmarks[1].z - landmarks[0].z) > 0.05) {
+                canvasCtx.fillText("Face the camera directly", 10, 150);
+            }
+        }
+
+        function captureImage(image) {
+            isCaptured = true;
+
+            // 캔버스에 그린 이미지를 Blob으로 변환
+            canvas.toBlob((blob) => {
+                // 서버로 Blob 데이터를 전송
+                const formData = new FormData();
+                formData.append('file', blob, 'captured_image.jpg');
+
+                fetch('/upload_image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        console.log('Image uploaded:', data.message);
+                    } else {
+                        console.error('Image upload failed:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading image:', error);
+                });
+            }, 'image/jpeg');
+            alert('캡쳐완료 분석하기를 눌러주세요.');  // Display message
+        }
+
+        function resetCapture() {
+            isCaptured = false;
+            isCentered = false;
+            centerStartTime = 0;
+        }
+
+        async function analyzeImage() {
+            document.getElementById('progressSection').style.display = 'block';
+            let progressBar = document.getElementById('progressBar');
+            
+            const updateProgress = (percent) => {
+                progressBar.style.width = percent + '%';
+                progressBar.innerText = percent + '%';
+            };
+            
+            // 비동기적으로 서버에 분석 요청
+            let interval = setInterval(() => {
+                fetch('/analyze_progress')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.percent >= 100) {
+                        clearInterval(interval);
+                        updateProgress(100);
+
+                        // 분석이 완료되면 다른 페이지로 이동
+                        window.location.href = '/chin_shape_result';  // 분석 결과 페이지로 이동
+                    } else {
+                        updateProgress(data.percent);
+                    }
+                });
+            }, 1000); // 1초마다 업데이트
+        }
+
+        const faceMesh = new FaceMesh({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+        });
+
+        faceMesh.setOptions({
+            maxNumFaces: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        faceMesh.onResults(onResults);
+
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.onloadedmetadata = () => {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    detectFace();
+                };
+            } catch (error) {
+                console.error('Camera error:', error);
+            }
+        }
+
+        async function detectFace() {
+            try {
+                await faceMesh.send({ image: video });
+            } catch (error) {
+                console.error('Face detection error:', error);
+            }
+            requestAnimationFrame(detectFace);
+        }
+
+        startCamera();
+
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

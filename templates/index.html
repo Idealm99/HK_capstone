@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Fit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        .hero {
+            background-color: #fff;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: #777;
+            margin-bottom: 40px;
+        }
+        .btn-primary {
+            background-color: #ff4f5a;
+            border-color: #ff4f5a;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        .btn-primary:hover {
+            background-color: #ff3d4a;
+            border-color: #ff3d4a;
+        }
+        .btn-submit {
+            background-color: #4caf50;
+            border-color: #4caf50;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+        .selected {
+            background-color: #4caf50 !important;
+            border-color: #4caf50 !important;
+        }
+        .features {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+        .features h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .feature-card i {
+            font-size: 48px;
+            color: #ff4f5a;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .feature-card p {
+            font-size: 16px;
+            color: #777;
+        }
+        .footer {
+            background-color: #f8f8f8;
+            padding: 30px 0;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 0;
+        }
+        .spacer {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Face Fit</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Find Your Perfect Hairstyle</h1>
+                    <p>Discover the best hairstyles that suit your face shape and features with Face Fit.</p>
+                    <img src="{{ url_for('static', filename='a1.png') }}" alt="Hairstyles" style="max-width: 40%; height: auto; margin-bottom: 50px;">
+                    
+                    <!-- 성별 선택 -->
+                    <div id="genderSelection" class="gender-selection">
+                        <h2>Select Your Gender</h2>
+                        <button class="btn btn-primary btn-lg gender-btn" onclick="selectGender('male', this)">남성</button>
+                        <button class="btn btn-primary btn-lg gender-btn" onclick="selectGender('female', this)">여성</button>
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <!-- 선호도 선택 -->
+                    <div id="preferenceSelection" class="preference-selection" style="margin-top: 50px;">
+                        <h2>Select Your Preferences</h2>
+                        
+                        <!-- 앞머리 스타일 (게이지) -->
+                        <label>앞머리 스타일</label>
+                        <div>
+                            올린머리: <input type="range" id="fringeUp" min="0" max="100" value="33" oninput="updateFringe()">
+                            가르마: <input type="range" id="fringeSide" min="0" max="100" value="33" oninput="updateFringe()">
+                            내린머리: <input type="range" id="fringeDown" min="0" max="100" value="33" oninput="updateFringe()">
+                        </div>
+                        <p id="fringePercentage">올린머리 33%, 가르마 33%, 내린머리 33%</p>
+
+                        <div class="spacer"></div>
+
+                        <!-- 머리 기장 (게이지) -->
+                        <label>머리 기장</label>
+                        <div>
+                            긴: <input type="range" id="lengthLong" min="0" max="100" value="33" oninput="updateLength()">
+                            중간: <input type="range" id="lengthMedium" min="0" max="100" value="33" oninput="updateLength()">
+                            짧은: <input type="range" id="lengthShort" min="0" max="100" value="33" oninput="updateLength()">
+                        </div>
+                        <p id="lengthPercentage">긴 33%, 중간 33%, 짧은 33%</p>
+
+                        <div class="spacer"></div>
+
+                        <!-- 컬 선호도 (게이지) -->
+                        <label>컬 선호도</label>
+                        <input type="range" id="curlIntensity" min="0" max="100" value="50" oninput="updateCurl()">
+                        <p id="curlPercentage">컬 강도: 50%</p>
+
+                        <div class="spacer"></div>
+
+                        <!-- 제출 버튼 -->
+                        <button class="btn btn-submit" onclick="submitPreferences()">제출</button>
+                    </div>
+
+                    <!-- 제출 후 옵션 선택 -->
+                    <div id="optionSelection" class="option-selection" style="display: none;">
+                        <h2>Choose Your Service</h2>
+                        <button class="btn btn-primary btn-lg option-btn" onclick="goToFaceAnalysis()">얼굴 분석을 통한 헤어 합성</button>
+                        <button class="btn btn-secondary btn-lg option-btn" onclick="goToFaceCustom()">개인 선택 헤어 합성</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>주요 기능</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <i class="bi bi-camera"></i>
+                        <h3>웹캠 통합</h3>
+                        <p>원활한 분석을 위해 장치의 웹캠을 사용하여 얼굴을 쉽게 캡처할 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <i class="bi bi-cloud-upload"></i>
+                        <h3>이미지 업로드</h3>
+                        <p>좋아하는 사진을 업로드하여 스타일을 적용해 보세요.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="feature-card">
+                        <i class="bi bi-person-fill"></i>
+                        <h3>맞춤형 추천</h3>
+                        <p>여러분의 얼굴 형태에 맞춘 헤어스타일을 추천해 드립니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2024 Face Fit. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function selectGender(gender, button) {
+            const buttons = document.querySelectorAll('.gender-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            document.getElementById('preferenceSelection').style.display = 'block';
+        }
+
+        function updateFringe() {
+            const up = parseInt(document.getElementById('fringeUp').value);
+            const side = parseInt(document.getElementById('fringeSide').value);
+            const down = parseInt(document.getElementById('fringeDown').value);
+            const total = up + side + down;
+
+            document.getElementById('fringePercentage').innerText = `올린머리 ${(up / total * 100).toFixed(0)}%, 가르마 ${(side / total * 100).toFixed(0)}%, 내린머리 ${(down / total * 100).toFixed(0)}%`;
+        }
+
+        function updateLength() {
+            const long = parseInt(document.getElementById('lengthLong').value);
+            const medium = parseInt(document.getElementById('lengthMedium').value);
+            const short = parseInt(document.getElementById('lengthShort').value);
+            const total = long + medium + short;
+
+            document.getElementById('lengthPercentage').innerText = `긴 ${(long / total * 100).toFixed(0)}%, 중간 ${(medium / total * 100).toFixed(0)}%, 짧은 ${(short / total * 100).toFixed(0)}%`;
+        }
+
+        function updateCurl() {
+            const curl = parseInt(document.getElementById('curlIntensity').value);
+            document.getElementById('curlPercentage').innerText = `컬 강도: ${curl}%`;
+        }
+
+        function submitPreferences() {
+            const gender = document.querySelector('.gender-btn.selected').innerText;
+
+            const fringe = {
+                up: (parseInt(document.getElementById('fringeUp').value) / 100 + 1).toFixed(1),
+                side: (parseInt(document.getElementById('fringeSide').value) / 100 + 1).toFixed(1),
+                down: (parseInt(document.getElementById('fringeDown').value) / 100 + 1).toFixed(1)
+            };
+
+            const length = {
+                long: (parseInt(document.getElementById('lengthLong').value) / 100 + 1).toFixed(1),
+                medium: (parseInt(document.getElementById('lengthMedium').value) / 100 + 1).toFixed(1),
+                short: (parseInt(document.getElementById('lengthShort').value) / 100 + 1).toFixed(1)
+            };
+
+            const curlIntensity = (parseInt(document.getElementById('curlIntensity').value) / 100 + 1).toFixed(1);
+
+            const data = {
+                gender: gender,
+                fringe: fringe,
+                length: length,
+                curl: curlIntensity
+            };
+
+            fetch('/submit_preferences', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('선호도가 제출되었습니다.');
+                    // 선호도 제출 성공 후 옵션 선택 섹션을 표시
+                    document.getElementById('preferenceSelection').style.display = 'none';
+                    document.getElementById('genderSelection').style.display = 'none';
+                    document.getElementById('optionSelection').style.display = 'block';
+                } else {
+                    alert('제출 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function goToFaceAnalysis() {
+            window.location.href = '/camera';
+        }
+
+        function goToFaceCustom() {
+            window.location.href = '/custom';
+        }
+        
+    </script>
+</body>
+</html>
