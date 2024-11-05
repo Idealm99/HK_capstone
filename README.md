@@ -5,9 +5,10 @@
 <br>
 <br>
 
-## 📖 1. 프로젝트 개요
+## 1. 📖 프로젝트 개요
 
 > **"보통 사람들은 자신의 얼굴형에 대한 정보를 정확하게 알지 못하고 어떤 헤어스타일이 자신에게 잘 어울리는지 알기 쉽지 않다."**
+ <br>
 
 이 프로젝트는 개인의 얼굴 형태와 이목구비를 분석하여, 그에 적합한 헤어스타일을 추천해주는 시스템입니다. 이를 통해 사용자에게 얼굴형에 대한 정보를 전달하고, **개인적인 헤어스타일 선호도**를 고려하여 최적의 스타일을 제안합니다.
 
@@ -16,7 +17,7 @@
 <br>
 <br>
 
-## 🏗 2. 시스템 구조
+## 2. 🏗 시스템 구조
 
 
 <img src="https://github.com/user-attachments/assets/27404326-41a9-46fe-939c-0efc0e36e4cb" alt="image" width="500">
@@ -24,7 +25,7 @@
 
 <br>
 <br>
-
+<br>
 
 
 
@@ -36,7 +37,9 @@
 - **배포 환경**: Google Colab, Flask, Streamlit
 
   <br>
-# 4. 데이터셋 
+  <br>
+  
+## 4. 📁 데이터셋 
 * 기존 faceshape 데이터를 전처리 및 데이터를 추가적으로 수집하여 턱 데이터 셋을 직접 만들었다.
 * 턱 데이터셋 : https://www.kaggle.com/datasets/idealm99/chinshape2
 * 얼굴 데이터셋 : https://www.kaggle.com/datasets/niten19/face-shape-dataset
