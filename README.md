@@ -55,7 +55,8 @@
 
 
 
-
+  <br>
+  <br>
 
 <img src="https://github.com/user-attachments/assets/f4ca6bec-bb53-4139-85ca-adf170189f30" alt="image" width="350"> <img src="https://github.com/user-attachments/assets/fb6c7b19-9da6-43db-85ab-800dbb729500" alt="image" width="350">
 <img src="https://github.com/user-attachments/assets/f7213892-99eb-43cd-8162-5d3cd8e3cbb5" alt="image1" width="350"> <img src="https://github.com/user-attachments/assets/3b924b80-336e-4dca-8537-a0220a1782ce" alt="image2" width="350">
@@ -68,7 +69,8 @@
 
 
 
-# 5. 모델 학습 및 평가
+## 🤖 5. 모델 학습 및 평가
+
 
 // 턱 모양 분류 학습 내용과 정확도 
 // 대충 어떤 모델을 이용해 학습했고, 앙상블 학습 ... 이런거 쓰면 좋을듯 
@@ -79,8 +81,16 @@
 <br>
 <br>
 
-# 6. 시스템 구현
+## ⚙️ 6. 시스템 구현
+
 // 어떤 내용을 넣으면 좋을까? 
+
+1. **데이터 처리**: MediaPipe와 OpenCV를 사용하여 얼굴 특징을 추출하고 분석합니다.
+2. **서버 구축**: Flask 프레임워크를 기반으로 서버를 구축하고, MongoDB를 통해 사용자 데이터를 관리합니다.
+3. **프론트엔드 개발**: //
+4. **... 얼굴분석..**
+5. **API 연동**: AILabTools API를 통해 사용자 얼굴과 추천된 헤어스타일의 합성 결과를 제공합니다.
+
 
 <br>
 <br>
@@ -93,7 +103,7 @@
 
 
 <img src="https://github.com/user-attachments/assets/081ab4cd-b5db-44ec-9ccf-f70e3e9d349e" alt="image1" width="370">
-<img src="https://github.com/user-attachments/assets/61f35c7f-eee5-42bb-96f9-0dfc08dc93f8" alt="image2" width="350">
+<img src="https://github.com/user-attachments/assets/61f35c7f-eee5-42bb-96f9-0dfc08dc93f8" alt="image2" width="340">
 <img src="https://github.com/user-attachments/assets/3bc726f9-b9f1-4e1e-9fb9-1607ddab375a" alt="image3" width="370">
 <img src="https://github.com/user-attachments/assets/826f0f62-9958-4384-9f62-d92bada318c1" alt="image4" width="370">
 
@@ -113,6 +123,8 @@
 <br>
 <br>
 
+
+
 ## 역할분담 
 
 
@@ -120,7 +132,5 @@
 
 ---
 
-## 📬 문의
 
-문의 사항이 있으시면 아래의 이메일로 연락 주세요:
-- **Email**: 
+
