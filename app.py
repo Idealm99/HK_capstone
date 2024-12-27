@@ -37,7 +37,7 @@ def apply_hair_synthesis():
         image_data = request.files['image']
         hair_style = request.form['hair_style']
         
-        api_key = 'mEGHgLy4htBl9lUZkMcMAa5VTW4kxDuqqwzLOuoK1Ijn2rYDsA5wGxJ9eQEBpWXh'
+        api_key = 'none'
         url = 'https://www.ailabapi.com/api/portrait/effects/hairstyle-editor-pro'
         headers = {'ailabapi-api-key': api_key}
         
@@ -66,7 +66,7 @@ def apply_hair_synthesis():
 def get_async_result(task_id): 
     url = "https://www.ailabapi.com/api/common/query-async-task-result"
     headers = {
-        'ailabapi-api-key': 'mEGHgLy4htBl9lUZkMcMAa5VTW4kxDuqqwzLOuoK1Ijn2rYDsA5wGxJ9eQEBpWXh'  # API 키는 적절하게 설정해야 합니다.
+        'ailabapi-api-key': 'none' 
     }
     params = {'task_id': task_id}  # task_id를 쿼리 파라미터로 전달
 
