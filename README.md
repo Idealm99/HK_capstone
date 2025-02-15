@@ -32,7 +32,7 @@
   ## 3. 🛠 기술 스택
 
   - **프로그래밍 언어**: Python, JavaScript, html, css
-  - **프레임워크 및 라이브러리**: MediaPipe, OpenCV, TensorFlow
+  - **프레임워크 및 라이브러리**: MediaPipe, OpenCV, Pytorch
   - **데이터베이스**: MongoDB
   - **배포 환경**: Google Colab, Flask, Streamlit
 
@@ -84,7 +84,9 @@
   
   - GPU: NVIDIA Tesla V100, P100, T4 GPU를 이용해 학습을 진행하였다. 
   
-  - efficientnet B4 모델을 이용해 학습을 시켜 정확도를 높였고, 최종 정확도는 92%였다.
+  - efficientnet B4 모델을 이용해 학습을 시켜 정확도를 높였고, 최종 정확도는 92~94%였다.
+
+  - 가중치를 반영한 자카드 유사도를 이용하여 헤어스타일 추천 
   
   <br>
   <br>
